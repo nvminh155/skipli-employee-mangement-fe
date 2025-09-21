@@ -16,6 +16,7 @@ export type TUser = {
   email: string;
   password: string;
   username: string;
+  avatar?: string;
   role: EUserRole;
   status: EUserStatus;
   token: string;
