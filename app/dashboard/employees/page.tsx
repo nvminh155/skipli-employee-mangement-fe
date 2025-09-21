@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo, useRef, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,13 +11,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
-import employeeService from "@/services/emloyee.service";
+import employeeService, { TEmployee } from "@/services/emloyee.service";
 import { useFilterStore } from "@/stores/filter.store";
 import { EUserStatus } from "@/types/user";
-import { TEmployee } from "@/services/emloyee.service";
 import CreateEmployee from "./form-create";
 import { DeleteBtn } from "./delete-btn";
 import EditEmployee from "./form-edit";
+import { Input } from "@/components/ui/input";
+import { SearchIcon } from "lucide-react";
 
 const columns = [
   {
@@ -84,7 +85,12 @@ const ActionCell = ({ id }: { id: string }) => {
   );
 };
 
-const EmployeeTable = ({ employees }: { employees: TEmployee[] }) => {
+const EmployeeTable = memo(function EmployeeTable({
+  employees,
+}: {
+  employees: TEmployee[];
+}) {
+  console.log("EmployeeTable rendered");
   return (
     <Table>
       <TableCaption>A list of your recent employees.</TableCaption>
@@ -107,7 +113,7 @@ const EmployeeTable = ({ employees }: { employees: TEmployee[] }) => {
       </TableBody>
     </Table>
   );
-};
+});
 
 const EmployeeManagement = () => {
   const { filters, page, limit } = useFilterStore();
@@ -121,7 +127,7 @@ const EmployeeManagement = () => {
       <div>
         <h1>Employee Management</h1>
         <div className="flex justify-between items-center">
-          <div>{employees?.pagination.total}</div>
+          <div>{employees?.pagination.total} employees</div>
 
           <div className="flex gap-2">
             <CreateEmployee />
@@ -137,9 +143,24 @@ const EmployeeManagement = () => {
 };
 
 const SearchEmployee = () => {
+  const timer = useRef<NodeJS.Timeout | null>(null);
+  const { filters, setData } = useFilterStore();
+  function debounceSearch(value: string) {
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+
+    timer.current = setTimeout(() => {
+      setData({ ...filters, keyword: value }, 1, 10);
+    }, 800);
+  }
   return (
-    <div>
-      <h1>Search Employee</h1>
+    <div className="flex items-center gap-2 w-full mr-2">
+      <Input
+        placeholder="Search Employee"
+        className="w-full"
+        onChange={(e) => debounceSearch(e.target.value)}
+      />
     </div>
   );
 };
