@@ -37,7 +37,7 @@ const Card = ({ label, link }: { label: string; link: string }) => {
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 px-2",
+        "flex flex-col gap-2 px-2 rounded-sm rounded-tr-none rounded-br-none !py-4",
         isActive && "border-r-4 border-r-primary bg-secondary"
       )}
     >
