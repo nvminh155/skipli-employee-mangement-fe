@@ -5,8 +5,9 @@ export enum EUserStatus {
 }
 
 export enum EUserRole {
-  MANAGER = "MANAGER",
-  EMPLOYEE = "EMPLOYEE",
+  MANAGER = "manager",
+  EMPLOYEE = "employee",
+  ANY = "any",
 }
 
 export type TUser = {

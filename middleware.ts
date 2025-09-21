@@ -49,7 +49,7 @@ export const middleware = auth(async (req) => {
 
   // if (isPublicPage) return intlMiddleware(req);
 
-  if (!session && !isPublicPage) {
+  if ((!session || !session?.user.token) && !isPublicPage) {
     return NextResponse.redirect(
       new URL(`/?callbackUrl=${encodeURIComponent(reqUrl?.pathname)}`, req.url)
     );
