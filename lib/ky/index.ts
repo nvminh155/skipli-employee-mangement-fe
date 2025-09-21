@@ -209,7 +209,7 @@ export const kyAuthApi = {
           //   throw new Error(`more than needed`);
           // }
 
-          const additionalKey = keys.find((key) => key !== "success");
+          const additionalKey = keys.find((key) => key === "data");
           if (!additionalKey) {
             throw new Error(`key not found`);
           }
