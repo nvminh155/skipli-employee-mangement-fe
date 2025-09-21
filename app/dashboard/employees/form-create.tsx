@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Form, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { FormInput } from "@/components/form/form-input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { EUserRole } from "@/types/user";
 import employeeService from "@/services/emloyee.service";
 import { useMutation } from "@tanstack/react-query";
+import { Form } from "@/components/ui/form";
 
 const createEmployeeSchema = z.object({
   fullName: z
