@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import AuthHeader from "../_components/auth-header";
+import AuthHeader from "./_components/auth-header";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth.store";
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "lucide-react";
-import { Form, FormField, FormItem } from "@/components/ui/form";
+import { Form, FormField } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -41,7 +41,7 @@ const LoginPage = () => {
     onSuccess: () => {
       toast.success("Code sent successfully");
       setData(form.getValues("email"), "");
-      router.push("/verify");
+      router.push("/auth/verify");
     },
     onError: () => {
       toast.error("Code sending failed");
@@ -50,7 +50,6 @@ const LoginPage = () => {
 
   const onSubmit = (data: TLoginAuth) => {
     mutation.mutate(data);
-
   };
 
   return (
