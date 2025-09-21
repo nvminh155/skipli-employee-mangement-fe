@@ -12,14 +12,12 @@ const StoreToken = () => {
       };
     },
     select: (data) => {
-      console.log("data", data);
       const storedToken = useTokenStore.getState().token;
       if (!data.token && storedToken) {
         useTokenStore.getState().clearToken();
         return data;
       }
 const token = useTokenStore.getState().token;
-console.log("token", token)
       if (!useTokenStore.getState().token) {
         useTokenStore.setState({ token: data.token })
       };

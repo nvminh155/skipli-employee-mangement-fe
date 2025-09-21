@@ -61,16 +61,13 @@ const kyInstanceAuth = ky.create({
   hooks: {
     beforeRequest: [
       async (request, options) => {
-        console.log("beforeRequest", typeof window);
         if (typeof window === "undefined") {
           const session = await auth();
-          console.log("session", session);
           request.headers.set(
             "Authorization",
             `Bearer ${session?.user?.token}`
           );
         } else {
-          console.log("useTokenStore.getState().token", useTokenStore.getState().token)
           request.headers.set(
             "Authorization",
             `Bearer ${useTokenStore.getState().token}`
@@ -94,9 +91,6 @@ const handleError = async (error: unknown) => {
     const res = error.response;
     const req = error.request;
     const message = await res.json();
-    console.log(new URL(res.url)?.pathname?.replace(BASE_URL + "/api/v1", "/"));
-    console.log(Object.fromEntries(error.request.headers));
-    console.log(message);
 
     if (res?.status === 401) redirect("/login");
   }
@@ -105,7 +99,6 @@ const handleError = async (error: unknown) => {
     const res = await error.response;
     const dataErr = await res.json();
 
-    // console.log("r", dataErr);
     return Promise.reject({
       message: res.statusText,
       statusCode: res.status,

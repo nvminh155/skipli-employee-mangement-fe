@@ -58,7 +58,6 @@ export const useConversationStore = create<TConversationStore>((set, get) => {
       get().setSocket(socket);
 
       socket.on("connect", () => {
-        console.log("connected to conversations socket");
       });
 
       socket.on("rooms", (rooms: TConversation[]) => {
@@ -73,7 +72,6 @@ export const useConversationStore = create<TConversationStore>((set, get) => {
       socket.on(
         "updateConversation",
         (conversation: Pick<TConversation, "id" | "lastMessage">) => {
-          console.log("updateConversation", conversation);
           queryClient.invalidateQueries({
             queryKey: ["conversations", conversation.id],
             exact: true,
@@ -82,7 +80,6 @@ export const useConversationStore = create<TConversationStore>((set, get) => {
       );
 
       socket.on("receiveMessage", (message: TMessage) => {
-        console.log("receiveMessage", message);
         set({ messages: [...get().messages, message] });
       });
     },

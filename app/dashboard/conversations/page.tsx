@@ -68,7 +68,6 @@ const ListConversation = () => {
   const { conversations } = useConversationStore();
   return (
     <div>
-      <h1>List Conversation</h1>
       {conversations.map((conversation) => (
         <ConversationCard key={conversation.id} conversation={conversation} />
       ))}
@@ -128,8 +127,7 @@ const ListMessage = () => {
     }
   }, [messages]);
   return (
-    <div className=" border flex-1 max-h-[500px] flex flex-col overflow-y-scroll" ref={messagesRef}>
-      <h1>List Message</h1>
+    <div className=" border flex-1 py-2 max-h-[500px] flex flex-col overflow-y-scroll" ref={messagesRef}>
       {messages.map((message) => {
         const userId = session?.user?.userId;
         if (message.from.id === userId) {

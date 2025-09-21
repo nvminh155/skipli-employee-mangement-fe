@@ -25,15 +25,9 @@ export const middleware = auth(async (req) => {
   // if (isPublicPage) return intlMiddleware(req);
   if (!session && isPrivatePage) {
     return NextResponse.redirect(
-      new URL(`/?callbackUrl=${encodeURIComponent(reqUrl?.pathname)}`, req.url)
+      new URL(`/auth/?callbackUrl=${encodeURIComponent(reqUrl?.pathname)}`, req.url)
     );
   }
-  const callbackUrl = reqUrl.searchParams.get("callbackUrl");
-
-  // if (callbackUrl) {
-  //   return NextResponse.redirect(
-  //     new URL(decodeURIComponent(callbackUrl), req.url)
-  //   );
-  // }
+  
   return NextResponse.next();
 });

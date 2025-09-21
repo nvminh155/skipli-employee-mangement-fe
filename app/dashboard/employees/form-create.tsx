@@ -57,7 +57,6 @@ const CreateEmployee = () => {
   });
 
   const onSubmit = (data: TCreateEmployee) => {
-    console.log(data);
     mutate.mutate(data);
   };
 

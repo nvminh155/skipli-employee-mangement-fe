@@ -38,7 +38,6 @@ const employeeService = {
   },
   getById: async (id: string) => {
     const res = await kyAuthApi.get<TEmployee>(PATH + "/" + id);
-    console.log(res);
     return res;
   },
   update: async (

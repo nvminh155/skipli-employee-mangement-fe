@@ -13,7 +13,6 @@ const AuthPrefetch = async ({ children }: { children: React.ReactNode }) => {
     queryKey: ["token"],
     queryFn: async () => {
       const session = await auth();
-      console.log("session", session);
       return session?.user ?? "";
     },
   });

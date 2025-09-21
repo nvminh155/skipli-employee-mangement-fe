@@ -90,7 +90,6 @@ const EmployeeTable = memo(function EmployeeTable({
 }: {
   employees: TEmployee[];
 }) {
-  console.log("EmployeeTable rendered");
   return (
     <Table>
       <TableCaption>A list of your recent employees.</TableCaption>

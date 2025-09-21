@@ -28,7 +28,7 @@ declare module "next-auth" {
   }
 }
 
-declare module "next-auth/jwt" {
+declare module "@auth/core/jwt" {
   interface JWT {
     token: string;
     avatar?: string;
@@ -54,7 +54,6 @@ const authOptions: NextAuthConfig = {
       },
       async authorize(credentials): Promise<User | null> {
         const { username, password } = credentials ?? {};
-        console.log("authorize", credentials);
 
         if (typeof password !== "string" || typeof username !== "string")
           throw new Error("Must be a string");
