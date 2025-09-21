@@ -7,6 +7,7 @@ export const publicRoute = {
   "/": ["/"],
   "/login": ["/login"],
   "/verify": ["/verify"],
+  "/auth": ["/auth"],
 } as const;
 
 export const routeManager = {
