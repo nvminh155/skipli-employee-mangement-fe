@@ -2,18 +2,23 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { isServer } from "@tanstack/react-query";
 import ky, { HTTPError, Input, Options } from "ky";
-import { getToken } from "next-auth/jwt";
-import { getSession } from "next-auth/react";
+import { useTokenStore } from "@/stores/token.store";
+
+type TPagination = {
+  total: number;
+  page: number;
+  limit: number;
+  filters: Record<string, string>;
+};
 
 type TPaginationRes<TData> = {
   success: true;
   count: number;
-} & Record<string, TData[]> & {
-    CourseByMenter: {
-      count: number;
-      courses: TData[];
-    };
+  data: {
+    result: TData[];
+    pagination: TPagination;
   };
+};
 
 type TSingleRes<TData> = {
   success: true;
@@ -56,20 +61,23 @@ const kyInstanceAuth = ky.create({
   hooks: {
     beforeRequest: [
       async (request, options) => {
+        console.log("beforeRequest", typeof window);
         if (typeof window === "undefined") {
           const session = await auth();
+          console.log("session", session);
           request.headers.set(
             "Authorization",
             `Bearer ${session?.user?.token}`
           );
         } else {
+          console.log("useTokenStore.getState().token", useTokenStore.getState().token)
           request.headers.set(
             "Authorization",
-            `Bearer ${localStorage.getItem("token")}`
+            `Bearer ${useTokenStore.getState().token}`
           );
         }
 
-        // request.headers.set("Content-Type", "application/json");
+        request.headers.set("Content-Type", "application/json");
         if (options.body) {
           request.headers.set(
             "Content-Length",
@@ -108,100 +116,74 @@ const handleError = async (error: unknown) => {
   return Promise.reject(error);
 };
 
-  export const kyApi = {
-    get: async <TData = unknown>(url: Input, options?: Options) => {
-      return await kyInstance
-        .get(url, options)
-        .json<TResponse<TData>>()
-        .then((res) => {
-          if (res?.success) {
-            const keys = Object.keys(res);
-            if (keys.length !== 2) {
-              throw new Error(`more than needed`);
-            }
+export const kyApi = {
+  get: async <TData = unknown>(url: Input, options?: Options) => {
+    return await kyInstance
+      .get(url, options)
+      .json<TResponse<TData>>()
+      .then((res) => {
+        if (res?.success) {
+          const keys = Object.keys(res);
+          if (keys.length !== 2) {
+            throw new Error(`more than needed`);
+          }
 
-            const dataKey = keys.find((key) => key === "data");
-            if (!dataKey) {
-              throw new Error(`key not found`);
-            }
+          const dataKey = keys.find((key) => key === "data");
+          if (!dataKey) {
+            throw new Error(`key not found`);
+          }
 
-            if (dataKey && dataKey in res) {
-              return res[dataKey];
-            }
+          if (dataKey && dataKey in res) {
+            return res[dataKey];
+          }
 
+          throw new Error(`unexpected error`);
+        }
+      })
+      .catch(handleError);
+  },
+
+  getList: async <TData = unknown>(url: Input, options?: Options) => {
+    return kyInstance
+      .get(url, options)
+      .json<TResponseList<TData>>()
+      .then((res) => {
+        if (res?.success) {
+          const keys = Object.keys(res);
+
+          const additionalKey = keys.find(
+            (key) => key !== "success" && key !== "count"
+          );
+          if (!additionalKey) {
             throw new Error(`unexpected error`);
           }
-        })
-        .catch(handleError);
-    },
+        }
+      })
+      .catch(handleError);
+  },
 
-    getList: async <TData = unknown>(url: Input, options?: Options) => {
-      return kyInstance
-        .get(url, options)
-        .json<TResponseList<TData>>()
-        .then((res) => {
-          if (res?.success) {
-            const keys = Object.keys(res);
-            const isGetCourseByMentor = keys.find((k) => k === "CourseByMenter");
+  post: async <TData = unknown>(url: Input, options?: Options) => {
+    return kyInstance
+      .post(url, options ?? {})
+      .json<TResponse<TData>>()
+      .then((res) => {
+        if (res?.success) {
+          const keys = Object.keys(res);
 
-            if (isGetCourseByMentor) {
-              return {
-                count: res.CourseByMenter.count,
-                data: res.CourseByMenter.courses,
-              };
-            }
-
-            if (keys.length === 4) {
-              if (res && res.getMentor) {
-                return {
-                  count: Number(res.totalPages) * 12,
-                  data: res.getMentor,
-                };
-              }
-            }
-            if (keys.length !== 3) {
-              throw new Error(`more than needed`);
-            }
-
-            const additionalKey = keys.find(
-              (key) => key !== "success" && key !== "count"
-            );
-            if (!additionalKey) {
-              throw new Error(`key not found`);
-            }
-
-            if (additionalKey && additionalKey in res) {
-              return { count: res.count, data: res[additionalKey] };
-            }
-            throw new Error(`unexpected error`);
+          const dataKey = keys.find((key) => key === "data");
+          if (!dataKey) {
+            throw new Error(`key not found`);
           }
-        })
-        .catch(handleError);
-    },
 
-    post: async <TData = unknown>(url: Input, options?: Options) => {
-      return kyInstance
-        .post(url, options ?? {})
-        .json<TResponse<TData>>()
-        .then((res) => {
-          if (res?.success) {
-            const keys = Object.keys(res);
-       
-
-            const dataKey = keys.find((key) => key === "data");
-            if (!dataKey) {
-              throw new Error(`key not found`);
-            }
-
-            if (dataKey && dataKey in res) {
-              return res[dataKey];
-            }
-
-            throw new Error(`unexpected error`);
+          if (dataKey && dataKey in res) {
+            return res[dataKey];
           }
-        })
-        .catch(handleError);
-    },
+
+          throw new Error(`unexpected error`);
+        }
+      })
+      .catch(handleError);
+  },
 
   put: async <TData = unknown>(url: Input, options?: Options) => {
     return kyInstance
@@ -240,51 +222,22 @@ export const kyAuthApi = {
       })
       .catch(handleError);
   },
-  getAny: async <TData = unknown>(url: Input, options?: Options) => {
-    return kyInstanceAuth
-      .get(url, options)
-      .json<TResponse<TData>>()
-      .then((res) => {
-        if (res?.success) {
-          const keys = Object.keys(res);
-          // if (keys.length !== 2) {
-          //   throw new Error(`more than needed`);
-          // }
-
-          const additionalKey = keys.find((key) => key !== "success");
-          if (!additionalKey) {
-            throw new Error(`key not found`);
-          }
-
-          if (additionalKey && additionalKey in res) {
-            return res;
-          }
-          throw new Error(`unexpected error`);
-        }
-      })
-      .catch(handleError);
-  },
 
   getList: async <TData>(url: Input, options?: Options) => {
     return kyInstanceAuth
-      .get(url, options)
+      .post(url, options)
       .json<TResponseList<TData>>()
       .then((res) => {
         if (res?.success) {
           const keys = Object.keys(res);
-          if (keys.length > 3) {
-            throw new Error(`more than needed`);
+
+          const dataKey = keys.find((key) => key === "data");
+          if (!dataKey) {
+            throw new Error(`key data not found`);
           }
 
-          const additionalKey = keys.find(
-            (key) => key !== "success" && key !== "count"
-          );
-          if (!additionalKey) {
-            throw new Error(`key not found`);
-          }
-
-          if (additionalKey && additionalKey in res) {
-            return { count: res.count, data: res[additionalKey] };
+          if (dataKey && dataKey in res) {
+            return res[dataKey];
           }
           throw new Error(`unexpected error`);
         }
