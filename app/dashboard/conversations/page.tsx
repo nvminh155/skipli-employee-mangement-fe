@@ -128,12 +128,12 @@ const ListMessage = () => {
   }, [messages]);
   return (
     <div className=" border flex-1 py-2 max-h-[500px] flex flex-col overflow-y-scroll" ref={messagesRef}>
-      {messages.map((message) => {
+      {messages.map((message, i) => {
         const userId = session?.user?.userId;
         if (message.from.id === userId) {
-          return <MessageFrom key={message.id} message={message} />;
+          return <MessageFrom key={message.id + "_" + i} message={message} />;
         }
-        return <MessageTo key={message.id} message={message} />;
+        return <MessageTo key={message.id + "_" + i} message={message} />;
       })}
     </div>
   );
