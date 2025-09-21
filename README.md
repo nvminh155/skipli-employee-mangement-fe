@@ -1,15 +1,15 @@
 ## PROJECT STRUCTURE
 
-app: for the routes
-auth: config nextauth & auth session using next-auth
-components: containing custom components and component UI (using Shadcn)
-config: some config about the project
-contexts: make some providers 
-lib: containing some library or custom library
-services: contact with the API 
-stores: saving store to use in another components (using zustand)
-types: defining the type of the response or others 
-.env.example: the example key of env (to remember how many key are there)
+app: for the routes  
+auth: config nextauth & auth session using next-auth  
+components: containing custom components and component UI (using Shadcn)  
+config: some config about the project  
+contexts: make some providers   
+lib: containing some library or custom library  
+services: contact with the API   
+stores: saving store to use in another components (using zustand)  
+types: defining the type of the response or others   
+.env.example: the example key of env (to remember how many key are there)  
 
 
 ## HOW TO RUN
