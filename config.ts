@@ -9,5 +9,10 @@ export const publicRoute = {
   "/verify": ["/verify"],
 } as const;
 
+export const routeManager = {
+  ...publicRoute,
+  "/dashboard": "/dashboard",
+} as const;
+
 export type TPublicRoute = typeof publicRoute;
 export type TRoutePaths = keyof TPublicRoute;

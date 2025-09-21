@@ -24,7 +24,7 @@ const VerificationPage = () => {
     onSuccess: () => {
       toast.success("Logged in successfully");
       clearData();
-      router.push("/");
+      router.push("/dashboard");
     },
     onError: () => {
       toast.error("Logged in failed");
