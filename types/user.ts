@@ -1,7 +1,7 @@
 export enum EUserStatus {
-  PENDING = "PENDING",
-  ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
+  PENDING = "pending",
+  ACTIVE = "active",
+  INACTIVE = "inactive",
 }
 
 export enum EUserRole {
@@ -15,6 +15,7 @@ export type TUser = {
   fullName: string;
   email: string;
   password: string;
+  username: string;
   role: EUserRole;
   status: EUserStatus;
   token: string;

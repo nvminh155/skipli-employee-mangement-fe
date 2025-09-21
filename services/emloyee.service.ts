@@ -24,6 +24,32 @@ const employeeService = {
     });
     return res;
   },
+  create: async (
+    data: Omit<TEmployee, "id" | "token" | "status" | "password" | "username">
+  ) => {
+    const res = await kyAuthApi.post(PATH + "/createEmployee", {
+      json: data,
+    });
+    return res;
+  },
+  delete: async (id: string) => {
+    const res = await kyAuthApi.delete(PATH + "/" + id);
+    return res;
+  },
+  getById: async (id: string) => {
+    const res = await kyAuthApi.get<TEmployee>(PATH + "/" + id);
+    console.log(res);
+    return res;
+  },
+  update: async (
+    id: string,
+    data: Omit<TEmployee, "id" | "token" | "status" | "password" | "username">
+  ) => {
+    const res = await kyAuthApi.put<TEmployee>(PATH + "/" + id, {
+      json: data,
+    });
+    return res;
+  },
 };
 
 export default employeeService;
